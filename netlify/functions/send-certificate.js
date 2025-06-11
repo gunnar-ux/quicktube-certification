@@ -2,10 +2,15 @@ const nodemailer = require('nodemailer');
 
 // Email transporter setup
 async function setupEmailTransporter() {
+    console.log('Setting up email transporter...');
+    console.log('EMAIL_USER:', process.env.EMAIL_USER ? 'Set' : 'Not set');
+    console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? 'Set (length: ' + process.env.EMAIL_PASS.length + ')' : 'Not set');
+    
     // Use environment variables for email configuration
     if (process.env.SMTP_HOST) {
+        console.log('Using custom SMTP configuration');
         // Custom SMTP configuration
-        return nodemailer.createTransport({
+        return nodemailer.createTransporter({
             host: process.env.SMTP_HOST,
             port: process.env.SMTP_PORT || 587,
             secure: process.env.SMTP_SECURE === 'true',
@@ -15,12 +20,19 @@ async function setupEmailTransporter() {
             }
         });
     } else {
-        // Gmail configuration (fallback for development)
-        return nodemailer.createTransport({
+        console.log('Using Gmail configuration');
+        // Gmail configuration with better settings
+        return nodemailer.createTransporter({
             service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false, // Use TLS
             auth: {
-                user: process.env.EMAIL_USER || 'your-email@gmail.com',
-                pass: process.env.EMAIL_PASS || 'your-app-password'
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            },
+            tls: {
+                rejectUnauthorized: false
             }
         });
     }
@@ -78,6 +90,15 @@ exports.handler = async (event, context) => {
 
         // Setup email transporter
         const transporter = await setupEmailTransporter();
+        
+        // Test the connection
+        try {
+            await transporter.verify();
+            console.log('Email transporter verified successfully');
+        } catch (verifyError) {
+            console.error('Email transporter verification failed:', verifyError);
+            throw new Error(`Email configuration error: ${verifyError.message}`);
+        }
 
         // Convert base64 to buffer
         const pdfBuffer = Buffer.from(pdfBase64, 'base64');
@@ -126,7 +147,16 @@ exports.handler = async (event, context) => {
         };
 
         // Send email
-        await transporter.sendMail(mailOptions);
+        console.log('Attempting to send email to:', formData.email);
+        console.log('Email subject:', mailOptions.subject);
+        
+        try {
+            const result = await transporter.sendMail(mailOptions);
+            console.log('Email sent successfully:', result.messageId);
+        } catch (emailError) {
+            console.error('Failed to send email:', emailError);
+            throw new Error(`Failed to send email: ${emailError.message}`);
+        }
 
         return {
             statusCode: 200,

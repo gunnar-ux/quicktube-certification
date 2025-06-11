@@ -126,19 +126,11 @@ class CertificationApp {
     completeVideo(videoIndex, isAutomatic = false) {
         const videoId = `video${videoIndex}`;
         const statusEl = document.getElementById(`${videoId}-status`);
-        const button = document.querySelector(`[onclick="markVideoComplete(${videoIndex})"]`);
         
         if (!this.videoProgress[videoId]) {
             this.videoProgress[videoId] = true;
-            statusEl.textContent = isAutomatic ? 'Completed ✓ (Auto)' : 'Completed ✓';
+            statusEl.textContent = 'Completed ✓';
             statusEl.className = 'video-status completed';
-            
-            // Update button
-            if (button) {
-                button.textContent = '✓ Completed';
-                button.classList.add('completed');
-                button.disabled = true;
-            }
             
             // Update progress tracker
             this.updateProgressTracker();
@@ -146,10 +138,6 @@ class CertificationApp {
             // Update navigation
             this.updateNavigation();
         }
-    }
-
-    markVideoComplete(videoIndex) {
-        this.completeVideo(videoIndex, false); // false = manually completed
     }
 
     setupFormSubmission() {
@@ -653,11 +641,6 @@ function goToPreviousStep() {
     if (app.currentStep > 0) {
         app.goToStep(app.currentStep - 1);
     }
-}
-
-// Global function for marking videos complete
-function markVideoComplete(videoIndex) {
-    app.markVideoComplete(videoIndex);
 }
 
 // Initialize app when DOM is loaded

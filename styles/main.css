@@ -1202,41 +1202,4 @@ body {
         font-size: 14px;
         border-radius: 0;
     }
-}
-
-.mark-complete-btn {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.mark-complete-btn:hover {
-    background-color: #45a049;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(76, 175, 80, 0.3);
-}
-
-.mark-complete-btn:disabled {
-    background-color: #666;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-.mark-complete-btn.completed {
-    background-color: #666;
-    cursor: not-allowed;
-}
-
-.mark-complete-btn.completed::before {
-    content: "✓ ";
 } 
