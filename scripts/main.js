@@ -9,6 +9,7 @@ class CertificationApp {
             video2: false
         };
         this.progressIntervals = {};
+        this.players = {};
         this.init();
     }
 
@@ -35,16 +36,6 @@ class CertificationApp {
     setupVideoTracking() {
         const videos = ['video0', 'video1', 'video2'];
         
-        // Initialize YouTube players when API is ready
-        if (window.YT && window.YT.Player) {
-            this.initializeYouTubePlayers(videos);
-        } else {
-            // Wait for YouTube API to load
-            window.onYouTubeIframeAPIReady = () => {
-                this.initializeYouTubePlayers(videos);
-            };
-        }
-        
         videos.forEach(videoId => {
             const iframe = document.getElementById(videoId);
             const statusEl = document.getElementById(`${videoId}-status`);
@@ -57,31 +48,63 @@ class CertificationApp {
                 console.log(`YouTube video ${videoId} initialized`);
             }
         });
+        
+        // Initialize YouTube players when API is ready
+        this.initializeYouTubePlayers(videos);
     }
 
     initializeYouTubePlayers(videos) {
-        videos.forEach((videoId, index) => {
-            const iframe = document.getElementById(videoId);
-            if (iframe) {
-                // Extract video ID from src
-                const src = iframe.src;
-                const videoIdMatch = src.match(/embed\/([^?]+)/);
-                const youtubeVideoId = videoIdMatch ? videoIdMatch[1] : 'pSPoq13ZHf4';
-                
-                // Create YouTube player
-                new window.YT.Player(videoId, {
-                    videoId: youtubeVideoId,
-                    events: {
-                        'onStateChange': (event) => this.onPlayerStateChange(event, index),
-                        'onReady': (event) => {
-                            console.log(`YouTube player ${videoId} ready`);
-                            // Start tracking progress
-                            this.trackVideoProgress(event.target, index);
-                        }
-                    }
-                });
+        // Wait for YouTube API to be ready
+        const initPlayers = () => {
+            if (!window.YT || !window.YT.Player) {
+                console.log('YouTube API not ready, waiting...');
+                setTimeout(initPlayers, 500);
+                return;
             }
-        });
+            
+            console.log('YouTube API ready, initializing players...');
+            
+            videos.forEach((videoId, index) => {
+                const iframe = document.getElementById(videoId);
+                if (iframe) {
+                    // Extract video ID from src
+                    const src = iframe.src;
+                    const videoIdMatch = src.match(/embed\/([^?]+)/);
+                    const youtubeVideoId = videoIdMatch ? videoIdMatch[1] : 'pSPoq13ZHf4';
+                    
+                    console.log(`Creating player for ${videoId} with YouTube ID: ${youtubeVideoId}`);
+                    
+                    // Replace iframe with div for YouTube player
+                    const playerDiv = document.createElement('div');
+                    playerDiv.id = videoId + '_player';
+                    iframe.parentNode.replaceChild(playerDiv, iframe);
+                    
+                    // Create YouTube player
+                    const player = new window.YT.Player(playerDiv.id, {
+                        height: '400',
+                        width: '100%',
+                        videoId: youtubeVideoId,
+                        playerVars: {
+                            'enablejsapi': 1,
+                            'origin': window.location.origin
+                        },
+                        events: {
+                            'onReady': (event) => {
+                                console.log(`YouTube player ${videoId} ready`);
+                                this.startProgressTracking(event.target, index);
+                            },
+                            'onStateChange': (event) => this.onPlayerStateChange(event, index)
+                        }
+                    });
+                    
+                    // Store player reference
+                    if (!this.players) this.players = {};
+                    this.players[videoId] = player;
+                }
+            });
+        };
+        
+        initPlayers();
     }
 
     onPlayerStateChange(event, videoIndex) {
@@ -90,37 +113,66 @@ class CertificationApp {
         
         // Start tracking when video plays
         if (event.data === window.YT.PlayerState.PLAYING) {
-            this.trackVideoProgress(event.target, videoIndex);
+            this.startProgressTracking(event.target, videoIndex);
+        }
+        
+        // Stop tracking when video pauses or ends
+        if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) {
+            this.stopProgressTracking(videoIndex);
         }
     }
 
-    trackVideoProgress(player, videoIndex) {
+    startProgressTracking(player, videoIndex) {
         const videoId = `video${videoIndex}`;
         
         // Clear any existing interval
-        if (this.progressIntervals && this.progressIntervals[videoId]) {
-            clearInterval(this.progressIntervals[videoId]);
-        }
+        this.stopProgressTracking(videoIndex);
         
         // Initialize intervals object if not exists
         if (!this.progressIntervals) {
             this.progressIntervals = {};
         }
         
-        // Track progress every second
+        console.log(`Starting progress tracking for ${videoId}`);
+        
+        // Track progress every 2 seconds
         this.progressIntervals[videoId] = setInterval(() => {
-            if (player.getPlayerState() === window.YT.PlayerState.PLAYING) {
-                const currentTime = player.getCurrentTime();
-                const duration = player.getDuration();
-                const progress = (currentTime / duration) * 100;
-                
-                // Auto-complete at 95%
-                if (progress >= 95 && !this.videoProgress[videoId]) {
-                    this.completeVideo(videoIndex, true); // true = auto-completed
-                    clearInterval(this.progressIntervals[videoId]);
+            try {
+                if (player.getPlayerState() === window.YT.PlayerState.PLAYING) {
+                    const currentTime = player.getCurrentTime();
+                    const duration = player.getDuration();
+                    
+                    if (duration > 0) {
+                        const progress = (currentTime / duration) * 100;
+                        console.log(`${videoId} progress: ${progress.toFixed(1)}%`);
+                        
+                        // Auto-complete at 90%
+                        if (progress >= 90 && !this.videoProgress[videoId]) {
+                            console.log(`${videoId} reached 90%, marking as complete`);
+                            this.completeVideo(videoIndex, true);
+                            this.stopProgressTracking(videoIndex);
+                        }
+                    }
                 }
+            } catch (error) {
+                console.error(`Error tracking progress for ${videoId}:`, error);
+                this.stopProgressTracking(videoIndex);
             }
-        }, 1000);
+        }, 2000);
+    }
+
+    stopProgressTracking(videoIndex) {
+        const videoId = `video${videoIndex}`;
+        if (this.progressIntervals && this.progressIntervals[videoId]) {
+            clearInterval(this.progressIntervals[videoId]);
+            delete this.progressIntervals[videoId];
+            console.log(`Stopped progress tracking for ${videoId}`);
+        }
+    }
+
+    trackVideoProgress(player, videoIndex) {
+        // This method is now replaced by startProgressTracking
+        this.startProgressTracking(player, videoIndex);
     }
 
     completeVideo(videoIndex, isAutomatic = false) {
@@ -647,4 +699,12 @@ function goToPreviousStep() {
 let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new CertificationApp();
-}); 
+});
+
+// Global YouTube API ready callback
+window.onYouTubeIframeAPIReady = function() {
+    console.log('YouTube API loaded globally');
+    if (app) {
+        app.setupVideoTracking();
+    }
+}; 
