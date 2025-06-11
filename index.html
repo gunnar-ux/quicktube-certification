@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Tube Certification Training</title>
+    <link rel="icon" type="image/jpeg" href="images/favicon.jpg">
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <img src="images/logo.png" alt="Quick Tube Medical" class="nav-logo">
+            </div>
+            
+            <!-- Hamburger Menu Button (Mobile Only) -->
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <nav class="nav-links" id="navLinks">
+                <a href="https://quicktubemedical.com" class="nav-link">Home</a>
+                <a href="https://quicktubemedical.com/ifu" class="nav-link">IFU</a>
+                <a href="https://quicktubemedical.com/quick-tube-chest-tube-kit" class="nav-link">Chest Tubes</a>
+                <a href="https://quicktubemedical.com/contact-us" class="nav-link contact-btn">Contact Us</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Progress Tracker -->
+        <div class="progress-tracker">
+            <div class="progress-step active" data-step="0">
+                <div class="step-number">1</div>
+                <div class="step-label">Welcome</div>
+            </div>
+            <div class="progress-step" data-step="1">
+                <div class="step-number">2</div>
+                <div class="step-label">Virt. Demo</div>
+            </div>
+            <div class="progress-step" data-step="2">
+                <div class="step-number">3</div>
+                <div class="step-label">Live Demo 1</div>
+            </div>
+            <div class="progress-step" data-step="3">
+                <div class="step-number">4</div>
+                <div class="step-label">Live Demo 2</div>
+            </div>
+            <div class="progress-step" data-step="4">
+                <div class="step-number">5</div>
+                <div class="step-label">Certification</div>
+            </div>
+            <div class="progress-step" data-step="5">
+                <div class="step-number">6</div>
+                <div class="step-label">Complete</div>
+            </div>
+        </div>
+
+        <!-- Main Certification Card -->
+        <div class="certification-card">
+            <!-- Step 0: Welcome/Intro -->
+            <div class="step-content active" id="step-0">
+                <div class="welcome-content">
+                    <h2>Quick Tube Chest Tube Certification</h2>
+                    <p class="welcome-description">
+                        Complete your certification to use the Quick Tube Chest Tube System in clinical practice. 
+                        This comprehensive training covers proper deployment techniques and safety protocols.
+                    </p>
+                    
+                    <div class="training-info">
+                        <div class="info-item">
+                            <span class="info-icon">🎥</span>
+                            <span>3 Training Videos</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">📝</span>
+                            <span>Certification Form</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">⏱️</span>
+                            <span>~15 minutes total</span>
+                        </div>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3>Instructions:</h3>
+                        <ul>
+                            <li>Watch all three training videos completely</li>
+                            <li>Fill out the certification form with your details</li>
+                            <li>Receive your certificate via email immediately</li>
+                        </ul>
+                    </div>
+                    
+                    <button class="primary-btn" onclick="startCertification()">
+                        Begin Certification Process
+                    </button>
+                    
+                    <div class="disclaimer">
+                        <p><strong>Note:</strong> This certification does not replace any institutional or regulatory requirements for credentialing or privileging to perform chest tube placement procedures.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 1: Virtual Demo -->
+            <div class="step-content" id="step-1">
+                <div class="video-step">
+                    <h3>Virtual Demo</h3>
+                    <p class="video-description">Learn the fundamentals of the Quick Tube system through our virtual demonstration.</p>
+                    
+                    <div class="video-container-single">
+                        <iframe id="video0" width="100%" height="400" 
+                                src="https://www.youtube.com/embed/pSPoq13ZHf4?si=v04c8rbN3G3j6amN&enablejsapi=1" 
+                                title="Quick Tube Virtual Demo - Medical Training" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                referrerpolicy="strict-origin-when-cross-origin" 
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                    
+                    <div class="video-status" id="video0-status">Not completed</div>
+                    <button class="mark-complete-btn" onclick="markVideoComplete(0)">Mark as Completed</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Live Demo 1 -->
+            <div class="step-content" id="step-2">
+                <div class="video-step">
+                    <h3>Live Demo 1</h3>
+                    <p class="video-description">Watch a live demonstration of the Quick Tube deployment procedure.</p>
+                    
+                    <div class="video-container-single">
+                        <iframe id="video1" width="100%" height="400" 
+                                src="https://www.youtube.com/embed/pSPoq13ZHf4?si=v04c8rbN3G3j6amN&enablejsapi=1" 
+                                title="Quick Tube Live Demo 1 - Clinical Procedure" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                referrerpolicy="strict-origin-when-cross-origin" 
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                    
+                    <div class="video-status" id="video1-status">Not completed</div>
+                    <button class="mark-complete-btn" onclick="markVideoComplete(1)">Mark as Completed</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Live Demo 2 -->
+            <div class="step-content" id="step-3">
+                <div class="video-step">
+                    <h3>Live Demo 2</h3>
+                    <p class="video-description">Complete your training with the second live demonstration.</p>
+                    
+                    <div class="video-container-single">
+                        <iframe id="video2" width="100%" height="400" 
+                                src="https://www.youtube.com/embed/pSPoq13ZHf4?si=v04c8rbN3G3j6amN&enablejsapi=1" 
+                                title="Quick Tube Live Demo 2 - Advanced Techniques" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                referrerpolicy="strict-origin-when-cross-origin" 
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                    
+                    <div class="video-status" id="video2-status">Not completed</div>
+                    <button class="mark-complete-btn" onclick="markVideoComplete(2)">Mark as Completed</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Certification Form -->
+            <div class="step-content" id="step-4">
+                <div class="form-step">
+                    <h3>Certification Form</h3>
+                    <p class="form-description">Complete your information to receive your certification.</p>
+                    
+                    <form id="certForm" class="cert-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="physicianName">Physician Name *</label>
+                                <input type="text" id="physicianName" name="physicianName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="licenseNumber">Medical License Number *</label>
+                                <input type="text" id="licenseNumber" name="licenseNumber" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="institution">Hospital / Institution *</label>
+                                <input type="text" id="institution" name="institution" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="completionDate">Training Completion Date *</label>
+                                <input type="date" id="completionDate" name="completionDate" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="signature">Typed Signature *</label>
+                                <input type="text" id="signature" name="signature" placeholder="Type your full name as signature" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="primary-btn" id="submitBtn">
+                            <span class="btn-text">Generate Certificate</span>
+                            <span class="btn-loading" style="display: none;">Processing...</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Step 5: Success -->
+            <div class="step-content" id="step-5">
+                <div class="success-step">
+                    <div class="success-icon">🎉</div>
+                    <h3>Certification Complete!</h3>
+                    <p>Your certificate has been generated and sent to your email address.</p>
+                    <p>A copy has also been sent to Quick Tube Medical for our records.</p>
+                    <button onclick="window.location.href='https://quicktubemedical.com'" class="primary-btn">
+                        Return Home
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="step-navigation">
+                <button class="nav-btn prev-btn" id="prevBtn" onclick="goToPreviousStep()" disabled>
+                    ← Previous
+                </button>
+                <button class="nav-btn next-btn" id="nextBtn" onclick="goToNextStep()" disabled>
+                    Next →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html> 
