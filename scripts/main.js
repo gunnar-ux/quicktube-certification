@@ -8,6 +8,7 @@ class CertificationApp {
             video1: false,
             video2: false
         };
+        this.progressIntervals = {};
         this.init();
     }
 
@@ -34,6 +35,16 @@ class CertificationApp {
     setupVideoTracking() {
         const videos = ['video0', 'video1', 'video2'];
         
+        // Initialize YouTube players when API is ready
+        if (window.YT && window.YT.Player) {
+            this.initializeYouTubePlayers(videos);
+        } else {
+            // Wait for YouTube API to load
+            window.onYouTubeIframeAPIReady = () => {
+                this.initializeYouTubePlayers(videos);
+            };
+        }
+        
         videos.forEach(videoId => {
             const iframe = document.getElementById(videoId);
             const statusEl = document.getElementById(`${videoId}-status`);
@@ -43,11 +54,102 @@ class CertificationApp {
                 statusEl.textContent = 'Not completed';
                 statusEl.className = 'video-status not-completed';
                 
-                // For YouTube videos, we'll rely on manual completion
-                // since YouTube API requires more complex setup
                 console.log(`YouTube video ${videoId} initialized`);
             }
         });
+    }
+
+    initializeYouTubePlayers(videos) {
+        videos.forEach((videoId, index) => {
+            const iframe = document.getElementById(videoId);
+            if (iframe) {
+                // Extract video ID from src
+                const src = iframe.src;
+                const videoIdMatch = src.match(/embed\/([^?]+)/);
+                const youtubeVideoId = videoIdMatch ? videoIdMatch[1] : 'pSPoq13ZHf4';
+                
+                // Create YouTube player
+                new window.YT.Player(videoId, {
+                    videoId: youtubeVideoId,
+                    events: {
+                        'onStateChange': (event) => this.onPlayerStateChange(event, index),
+                        'onReady': (event) => {
+                            console.log(`YouTube player ${videoId} ready`);
+                            // Start tracking progress
+                            this.trackVideoProgress(event.target, index);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    onPlayerStateChange(event, videoIndex) {
+        const videoId = `video${videoIndex}`;
+        console.log(`Video ${videoId} state changed:`, event.data);
+        
+        // Start tracking when video plays
+        if (event.data === window.YT.PlayerState.PLAYING) {
+            this.trackVideoProgress(event.target, videoIndex);
+        }
+    }
+
+    trackVideoProgress(player, videoIndex) {
+        const videoId = `video${videoIndex}`;
+        
+        // Clear any existing interval
+        if (this.progressIntervals && this.progressIntervals[videoId]) {
+            clearInterval(this.progressIntervals[videoId]);
+        }
+        
+        // Initialize intervals object if not exists
+        if (!this.progressIntervals) {
+            this.progressIntervals = {};
+        }
+        
+        // Track progress every second
+        this.progressIntervals[videoId] = setInterval(() => {
+            if (player.getPlayerState() === window.YT.PlayerState.PLAYING) {
+                const currentTime = player.getCurrentTime();
+                const duration = player.getDuration();
+                const progress = (currentTime / duration) * 100;
+                
+                // Auto-complete at 95%
+                if (progress >= 95 && !this.videoProgress[videoId]) {
+                    this.completeVideo(videoIndex, true); // true = auto-completed
+                    clearInterval(this.progressIntervals[videoId]);
+                }
+            }
+        }, 1000);
+    }
+
+    completeVideo(videoIndex, isAutomatic = false) {
+        const videoId = `video${videoIndex}`;
+        const statusEl = document.getElementById(`${videoId}-status`);
+        const button = document.querySelector(`[onclick="markVideoComplete(${videoIndex})"]`);
+        
+        if (!this.videoProgress[videoId]) {
+            this.videoProgress[videoId] = true;
+            statusEl.textContent = isAutomatic ? 'Completed ✓ (Auto)' : 'Completed ✓';
+            statusEl.className = 'video-status completed';
+            
+            // Update button
+            if (button) {
+                button.textContent = '✓ Completed';
+                button.classList.add('completed');
+                button.disabled = true;
+            }
+            
+            // Update progress tracker
+            this.updateProgressTracker();
+            
+            // Update navigation
+            this.updateNavigation();
+        }
+    }
+
+    markVideoComplete(videoIndex) {
+        this.completeVideo(videoIndex, false); // false = manually completed
     }
 
     setupFormSubmission() {
@@ -419,34 +521,56 @@ class CertificationApp {
         // Determine API endpoint based on environment
         const apiUrl = window.location.hostname === 'localhost' 
             ? '/api/generate-certificate'
-            : '/.netlify/functions/send-certificate-test'; // Temporary test function
+            : '/.netlify/functions/send-certificate'; // Use the actual function
         
         console.log('Sending to API URL:', apiUrl);
         console.log('Form data:', formData);
         
-        // Send via appropriate endpoint
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                formData: formData,
-                pdfBase64: pdfBase64
-            })
-        });
-        
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
-        
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-            console.error('Server error:', errorData);
-            throw new Error(errorData.message || `Server error: ${response.status}`);
+        try {
+            // Send via appropriate endpoint
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    formData: formData,
+                    pdfBase64: pdfBase64
+                })
+            });
+            
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Server error response:', errorText);
+                
+                // Try to parse as JSON, fallback to text
+                let errorData;
+                try {
+                    errorData = JSON.parse(errorText);
+                } catch {
+                    errorData = { message: errorText || `Server error: ${response.status}` };
+                }
+                
+                throw new Error(errorData.message || `Server error: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('Success result:', result);
+            
+        } catch (error) {
+            console.error('Certificate sending failed:', error);
+            
+            // Provide more specific error messages
+            if (error.message.includes('Failed to fetch')) {
+                throw new Error('Network error: Unable to connect to the server. Please check your internet connection and try again.');
+            } else if (error.message.includes('404')) {
+                throw new Error('Service unavailable: The certificate service is not properly configured. Please contact support.');
+            } else {
+                throw error;
+            }
         }
-        
-        const result = await response.json();
-        console.log('Success result:', result);
     }
 
     setupBreadcrumbNavigation() {
@@ -509,29 +633,6 @@ class CertificationApp {
                     navLinks.classList.remove('active');
                 }
             });
-        }
-    }
-
-    markVideoComplete(videoIndex) {
-        const videoId = `video${videoIndex}`;
-        const statusEl = document.getElementById(`${videoId}-status`);
-        const button = event.target;
-        
-        if (!this.videoProgress[videoId]) {
-            this.videoProgress[videoId] = true;
-            statusEl.textContent = 'Completed ✓';
-            statusEl.className = 'video-status completed';
-            
-            // Update button
-            button.textContent = '✓ Completed';
-            button.classList.add('completed');
-            button.disabled = true;
-            
-            // Update progress tracker
-            this.updateProgressTracker();
-            
-            // Update navigation
-            this.updateNavigation();
         }
     }
 }
