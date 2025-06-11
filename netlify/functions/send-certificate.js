@@ -10,7 +10,7 @@ async function setupEmailTransporter() {
     if (process.env.SMTP_HOST) {
         console.log('Using custom SMTP configuration');
         // Custom SMTP configuration
-        return nodemailer.createTransporter({
+        return nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: process.env.SMTP_PORT || 587,
             secure: process.env.SMTP_SECURE === 'true',
@@ -22,7 +22,7 @@ async function setupEmailTransporter() {
     } else {
         console.log('Using Gmail configuration');
         // Gmail configuration with better settings
-        return nodemailer.createTransporter({
+        return nodemailer.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
             port: 587,
