@@ -9,6 +9,8 @@ body {
     background-color: #121212;
     color: #ffffff;
     line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .container {
@@ -501,51 +503,36 @@ body {
     padding: 40px;
     border: 2px solid #333;
     min-height: 600px;
-    max-height: 80vh;
     max-width: 900px;
-    margin: 0 auto;
+    margin: 0 auto 20px;
     position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
 }
 
-/* Make step content scrollable when needed */
+/* Step Content */
 .step-content {
     display: none;
     opacity: 0;
     transform: translateX(30px);
     transition: all 0.3s ease;
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 10px;
-    margin-bottom: 80px; /* Space for navigation */
-}
-
-/* Custom scrollbar for step content */
-.step-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.step-content::-webkit-scrollbar-track {
-    background: #2a2a2a;
-    border-radius: 4px;
-}
-
-.step-content::-webkit-scrollbar-thumb {
-    background: #f28c00;
-    border-radius: 4px;
-}
-
-.step-content::-webkit-scrollbar-thumb:hover {
-    background: #e07b00;
 }
 
 .step-content.active {
-    display: flex;
-    flex-direction: column;
+    display: block;
     opacity: 1;
     transform: translateX(0);
+}
+
+/* Navigation */
+.step-navigation {
+    position: absolute;
+    bottom: 20px;
+    left: 40px;
+    right: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 820px;
+    margin: 0 auto;
 }
 
 /* Welcome Step */
@@ -766,9 +753,6 @@ body {
     align-items: center;
     max-width: 820px;
     margin: 0 auto;
-    background-color: #1e1e1e;
-    padding-top: 20px;
-    border-top: 1px solid #333;
 }
 
 .nav-btn {
@@ -836,20 +820,9 @@ body {
 /* Short desktop windows - height-based media query */
 @media (max-height: 700px) and (min-width: 769px) {
     .certification-card {
-        max-height: 85vh;
         min-height: auto;
         padding: 30px;
-    }
-    
-    .step-content {
-        margin-bottom: 70px;
-    }
-    
-    .step-navigation {
-        bottom: 15px;
-        left: 30px;
-        right: 30px;
-        padding-top: 15px;
+        margin-bottom: 15px;
     }
     
     .welcome-content h2 {
@@ -859,35 +832,24 @@ body {
     
     .welcome-description {
         font-size: 16px;
-        margin-bottom: 30px;
+        margin-bottom: 25px;
     }
     
     .training-info {
-        margin: 30px 0;
+        margin: 25px 0;
     }
     
     .instructions {
-        padding: 25px;
-        margin: 30px 0;
+        padding: 20px;
+        margin: 25px 0;
     }
 }
 
 /* Very short desktop windows */
 @media (max-height: 600px) and (min-width: 769px) {
     .certification-card {
-        max-height: 90vh;
         padding: 20px;
-    }
-    
-    .step-content {
-        margin-bottom: 60px;
-    }
-    
-    .step-navigation {
-        bottom: 10px;
-        left: 20px;
-        right: 20px;
-        padding-top: 10px;
+        margin-bottom: 10px;
     }
     
     .welcome-content h2 {
@@ -906,13 +868,19 @@ body {
     }
     
     .instructions {
-        padding: 20px;
+        padding: 15px;
         margin: 20px 0;
     }
     
     .video-container-single iframe,
     .video-container-single div[id$="_player"] {
         height: 300px;
+    }
+    
+    .step-navigation {
+        bottom: 15px;
+        left: 20px;
+        right: 20px;
     }
 }
 
