@@ -34,7 +34,7 @@ class CertificationApp {
     }
 
     setupVideoTracking() {
-        const videos = ['video0', 'video1', 'video2'];
+        const videos = ['video0', 'video1'];
         
         videos.forEach(videoId => {
             const iframe = document.getElementById(videoId);
@@ -48,7 +48,7 @@ class CertificationApp {
                 console.log(`YouTube video ${videoId} initialized`);
             }
         });
-        
+
         // Initialize YouTube players when API is ready
         this.initializeYouTubePlayers(videos);
     }
@@ -268,7 +268,9 @@ class CertificationApp {
                 nextBtn.style.display = 'block';
                 break;
             case 3: // Video 2
-                canProceed = this.videoProgress.video2;
+                // For PDF step, check the checkbox state
+                const pdfCheckbox = document.getElementById('pdfConfirmation');
+                canProceed = pdfCheckbox && pdfCheckbox.checked;
                 nextBtn.textContent = 'Complete Training →';
                 nextBtn.style.display = 'block';
                 break;
@@ -291,16 +293,20 @@ class CertificationApp {
         if (currentStepEl) {
             currentStepEl.classList.remove('active');
         }
-        
+        // Reset PDF checkbox if leaving or entering step 3
+        if (this.currentStep === 3 || stepNumber === 3) {
+            const pdfCheckbox = document.getElementById('pdfConfirmation');
+            if (pdfCheckbox) pdfCheckbox.checked = false;
+            this.videoProgress.video2 = false;
+            this.updateNavigation();
+        }
         // Update current step
         this.currentStep = stepNumber;
-        
         // Show new step
         const newStepEl = document.getElementById(`step-${this.currentStep}`);
         if (newStepEl) {
             newStepEl.classList.add('active');
         }
-        
         // Update progress tracker and navigation
         this.updateProgressTracker();
         this.updateNavigation();
@@ -675,6 +681,11 @@ class CertificationApp {
             });
         }
     }
+
+    handlePdfConfirmation(checkbox) {
+        this.videoProgress.video2 = checkbox.checked;
+        this.updateNavigation();
+    }
 }
 
 // Global functions for HTML onclick handlers
@@ -699,6 +710,9 @@ function goToPreviousStep() {
 let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new CertificationApp();
+    window.handlePdfConfirmation = function(checkbox) {
+        app.handlePdfConfirmation(checkbox);
+    };
 });
 
 // Global YouTube API ready callback

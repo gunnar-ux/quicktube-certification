@@ -44,15 +44,15 @@
             </div>
             <div class="progress-step" data-step="1">
                 <div class="step-number">2</div>
-                <div class="step-label">Virt. Demo</div>
+                <div class="step-label">Task 1</div>
             </div>
             <div class="progress-step" data-step="2">
                 <div class="step-number">3</div>
-                <div class="step-label">Live Demo 1</div>
+                <div class="step-label">Task 2</div>
             </div>
             <div class="progress-step" data-step="3">
                 <div class="step-number">4</div>
-                <div class="step-label">Live Demo 2</div>
+                <div class="step-label">Task 3</div>
             </div>
             <div class="progress-step" data-step="4">
                 <div class="step-number">5</div>
@@ -77,8 +77,8 @@
                     
                     <div class="training-info">
                         <div class="info-item">
-                            <span class="info-icon">🎥</span>
-                            <span>3 Training Videos</span>
+                            <span class="info-icon">⛑️</span>
+                            <span>3 Training Tasks</span>
                         </div>
                         <div class="info-item">
                             <span class="info-icon">📝</span>
@@ -86,14 +86,14 @@
                         </div>
                         <div class="info-item">
                             <span class="info-icon">⏱️</span>
-                            <span>~15 minutes total</span>
+                            <span>~5 minutes total</span>
                         </div>
                     </div>
                     
                     <div class="instructions">
                         <h3>Instructions:</h3>
                         <ul>
-                            <li>Watch all three training videos completely</li>
+                            <li>Complete all 3 training tasks</li>
                             <li>Fill out the certification form with your details</li>
                             <li>Receive your certificate via email immediately</li>
                         </ul>
@@ -112,8 +112,8 @@
             <!-- Step 1: Virtual Demo -->
             <div class="step-content" id="step-1">
                 <div class="video-step">
-                    <h3>Virtual Demo</h3>
-                    <p class="video-description">Learn the fundamentals of the Quick Tube system through our virtual demonstration.</p>
+                    <h3>Task 1: Virtual Demo</h3>
+                    <p class="video-description">INSTRUCTIONS: Watch the full video to completion, then click "Next Page".</p>
                     
                     <div class="video-container-single">
                         <iframe id="video0" width="100%" height="400" 
@@ -133,8 +133,8 @@
             <!-- Step 2: Live Demo 1 -->
             <div class="step-content" id="step-2">
                 <div class="video-step">
-                    <h3>Live Demo 1</h3>
-                    <p class="video-description">Watch a live demonstration of the Quick Tube deployment procedure.</p>
+                    <h3>Taks 2: Live Demo 1</h3>
+                    <p class="video-description">INSTRUCTIONS: Watch the full video to completion, then click "Next Page"</p>
                     
                     <div class="video-container-single">
                         <iframe id="video1" width="100%" height="400" 
@@ -154,21 +154,23 @@
             <!-- Step 3: Live Demo 2 -->
             <div class="step-content" id="step-3">
                 <div class="video-step">
-                    <h3>Live Demo 2</h3>
-                    <p class="video-description">Complete your training with the second live demonstration.</p>
+                    <h3>Task 3: Read Instructions for Use</h3>
+                    <p class="video-description">INSTRUCTIONS: Review the document below and confirm you have read it.</p>
                     
-                    <div class="video-container-single">
-                        <iframe id="video2" width="100%" height="400" 
-                                src="https://www.youtube.com/embed/pSPoq13ZHf4?si=v04c8rbN3G3j6amN&enablejsapi=1&origin=https://quicktubecertification.netlify.app" 
-                                title="Quick Tube Live Demo 2 - Advanced Techniques" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                referrerpolicy="strict-origin-when-cross-origin" 
-                                allowfullscreen>
+                    <div class="pdf-container">
+                        <iframe id="pdfViewer" width="100%" height="600" 
+                                src="assets/ifu.pdf"
+                                title="Quick Tube Instructions for Use"
+                                frameborder="0">
                         </iframe>
                     </div>
-                    
-                    <div class="video-status" id="video2-status">Not completed</div>
+                </div>
+                <div class="pdf-confirmation">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="pdfConfirmation" onchange="handlePdfConfirmation(this)">
+                        <span class="checkmark"></span>
+                        I have read the Instructions for Use document.
+                    </label>
                 </div>
             </div>
 
@@ -199,7 +201,7 @@
                             
                             <div class="form-group">
                                 <label for="completionDate">Training Completion Date *</label>
-                                <input type="date" id="completionDate" name="completionDate" required>
+                                <input type="date" id="completionDate" name="completionDate" required readonly>
                             </div>
                         </div>
 
