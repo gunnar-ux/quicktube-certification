@@ -706,6 +706,37 @@ function goToPreviousStep() {
     }
 }
 
+// Print certificate function
+function printCertificate() {
+    // Get the form data from the current form
+    const formData = {
+        physicianName: document.getElementById('physicianName').value,
+        licenseNumber: document.getElementById('licenseNumber').value,
+        institution: document.getElementById('institution').value,
+        completionDate: document.getElementById('completionDate').value,
+        signature: document.getElementById('signature').value,
+        email: document.getElementById('email').value
+    };
+    
+    // Generate PDF and open print dialog
+    app.generatePDF(formData).then(pdfBlob => {
+        const url = URL.createObjectURL(pdfBlob);
+        const printWindow = window.open(url, '_blank');
+        
+        printWindow.onload = function() {
+            printWindow.print();
+        };
+        
+        // Clean up the URL after printing
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+        }, 1000);
+    }).catch(error => {
+        console.error('Error generating certificate for printing:', error);
+        alert('There was an error generating the certificate for printing. Please try again.');
+    });
+}
+
 // Initialize app when DOM is loaded
 let app;
 document.addEventListener('DOMContentLoaded', () => {

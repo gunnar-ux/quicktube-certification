@@ -133,7 +133,7 @@
             <!-- Step 2: Live Demo 1 -->
             <div class="step-content" id="step-2">
                 <div class="video-step">
-                    <h3>Taks 2: Live Demo 1</h3>
+                    <h3>Task 2: Live Demo 1</h3>
                     <p class="video-description">INSTRUCTIONS: Watch the full video to completion, then click "Next Page"</p>
                     
                     <div class="video-container-single">
@@ -232,9 +232,14 @@
                     <h3>Certification Complete!</h3>
                     <p>Your certificate has been generated and sent to your email address.</p>
                     <p>A copy has also been sent to Quick Tube Medical for our records.</p>
-                    <button onclick="window.location.href='https://quicktubemedical.com'" class="primary-btn">
-                        Return Home
-                    </button>
+                    <div class="button-container">
+                        <button onclick="printCertificate()" class="primary-btn">
+                            Print Certificate
+                        </button>
+                        <button onclick="window.location.href='https://quicktubemedical.com'" class="secondary-btn">
+                            Return Home
+                        </button>
+                    </div>
                 </div>
             </div>
 

@@ -501,7 +501,6 @@ body {
     padding: 40px;
     border: 2px solid #333;
     min-height: 600px;
-    max-height: 80vh;
     max-width: 900px;
     margin: 0 auto;
     position: relative;
@@ -698,6 +697,40 @@ body {
 
 .success-step .primary-btn {
     margin-top: 40px;
+}
+
+/* Success step button container for multiple buttons */
+.success-step .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 40px;
+    align-items: center;
+}
+
+.success-step .button-container .primary-btn {
+    margin-top: 0;
+    min-width: 250px;
+}
+
+.success-step .button-container .secondary-btn {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 0;
+    padding: 18px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 250px;
+}
+
+.success-step .button-container .secondary-btn:hover {
+    background-color: #444;
+    transform: translateY(-3px);
 }
 
 /* Primary Button */
@@ -1093,6 +1126,19 @@ body {
     
     .success-step .primary-btn {
         margin-top: 30px;
+    }
+    
+    /* Success step button container - mobile */
+    .success-step .button-container {
+        margin-top: 30px;
+        gap: 15px;
+    }
+    
+    .success-step .button-container .primary-btn,
+    .success-step .button-container .secondary-btn {
+        min-width: 200px;
+        padding: 16px 30px;
+        font-size: 16px;
     }
     
     /* Step Navigation - Mobile Optimized */
