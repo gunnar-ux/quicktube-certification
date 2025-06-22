@@ -264,7 +264,7 @@ class CertificationApp {
                 break;
             case 2: // Video 1
                 canProceed = this.videoProgress.video1;
-                nextBtn.textContent = 'Next Video →';
+                nextBtn.textContent = 'Next →';
                 nextBtn.style.display = 'block';
                 break;
             case 3: // Video 2
