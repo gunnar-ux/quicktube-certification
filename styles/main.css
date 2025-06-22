@@ -1141,6 +1141,37 @@ body {
         font-size: 16px;
     }
     
+    /* PDF confirmation - mobile */
+    .pdf-confirmation {
+        margin: 15px auto 30px auto;
+        padding: 15px;
+        max-width: 100%;
+    }
+    
+    .checkbox-container {
+        font-size: 15px;
+        padding-left: 30px;
+    }
+    
+    .checkmark {
+        height: 22px;
+        width: 22px;
+    }
+    
+    .checkbox-container .checkmark:after {
+        left: 7px;
+        top: 4px;
+        width: 4px;
+        height: 8px;
+    }
+    
+    /* PDF container - mobile */
+    .pdf-container {
+        min-height: 300px;
+        max-height: 50vh;
+        margin-bottom: 15px;
+    }
+    
     /* Step Navigation - Mobile Optimized */
     .step-navigation {
         position: relative;
