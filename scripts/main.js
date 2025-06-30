@@ -384,6 +384,7 @@ class CertificationApp {
         const contentWidth = pageWidth - (margin * 2);
         
         // Add company logo at the top
+        /*
         try {
             const logoImg = new Image();
             logoImg.src = 'assets/logo.png';
@@ -399,6 +400,7 @@ class CertificationApp {
         } catch (error) {
             console.warn('Could not load logo image:', error);
         }
+        */
         
         // Header - Left side (moved down to accommodate logo)
         doc.setFontSize(10);
@@ -559,6 +561,7 @@ class CertificationApp {
         yPos += 35;
         
         // Add doctor's signature image and name
+        /*
         try {
             const signatureImg = new Image();
             signatureImg.src = 'assets/signature.png';
@@ -587,6 +590,11 @@ class CertificationApp {
             doc.text('Allen C. Smith, MD', margin, yPos);
             yPos += 20;
         }
+        */
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text('Allen C. Smith, MD', margin, yPos);
+        yPos += 20;
         
         // Note section
         doc.setFontSize(9);
