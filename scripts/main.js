@@ -383,10 +383,27 @@ class CertificationApp {
         const margin = 50;
         const contentWidth = pageWidth - (margin * 2);
         
-        // Header - Left side
+        // Add company logo at the top
+        try {
+            const logoImg = new Image();
+            logoImg.src = 'assets/logo.png';
+            await new Promise((resolve, reject) => {
+                logoImg.onload = resolve;
+                logoImg.onerror = reject;
+            });
+            
+            // Add logo (scaled to reasonable size)
+            const logoWidth = 80;
+            const logoHeight = (logoImg.height * logoWidth) / logoImg.width;
+            doc.addImage(logoImg, 'PNG', margin, 30, logoWidth, logoHeight);
+        } catch (error) {
+            console.warn('Could not load logo image:', error);
+        }
+        
+        // Header - Left side (moved down to accommodate logo)
         doc.setFontSize(10);
         doc.setFont(undefined, 'bold');
-        doc.text('Quick Tube Medical', margin, 60);
+        doc.text('Quick Tube Medical', margin, 120);
         
         // Header - Right side (aligned right)
         doc.setFont(undefined, 'normal');
@@ -397,7 +414,7 @@ class CertificationApp {
             'Knoxville, TN. 37917'
         ];
         
-        let yPos = 60;
+        let yPos = 120;
         headerLines.forEach(line => {
             const textWidth = doc.getTextWidth(line);
             doc.text(line, pageWidth - margin - textWidth, yPos);
@@ -411,7 +428,7 @@ class CertificationApp {
         doc.text('(763) 442-1848', pageWidth - margin - doc.getTextWidth('(763) 442-1848'), yPos);
         
         // Title (centered)
-        yPos = 170;
+        yPos = 230;
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
         const title = 'Quick Tube Chest Tube Training Certification Form';
@@ -540,6 +557,36 @@ class CertificationApp {
         doc.text(currentDate, dateSigFieldX + 2, yPos);
         
         yPos += 35;
+        
+        // Add doctor's signature image and name
+        try {
+            const signatureImg = new Image();
+            signatureImg.src = 'assets/signature.png';
+            await new Promise((resolve, reject) => {
+                signatureImg.onload = resolve;
+                signatureImg.onerror = reject;
+            });
+            
+            // Add signature image (scaled to reasonable size)
+            const sigImgWidth = 60;
+            const sigImgHeight = (signatureImg.height * sigImgWidth) / signatureImg.width;
+            doc.addImage(signatureImg, 'PNG', margin, yPos, sigImgWidth, sigImgHeight);
+            
+            // Add doctor's name below the signature image
+            yPos += sigImgHeight + 5;
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text('Allen C. Smith, MD', margin, yPos);
+            
+            yPos += 20; // Add some spacing after the signature section
+        } catch (error) {
+            console.warn('Could not load signature image:', error);
+            // If signature image fails to load, just add the text
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text('Allen C. Smith, MD', margin, yPos);
+            yPos += 20;
+        }
         
         // Note section
         doc.setFontSize(9);
