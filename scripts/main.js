@@ -368,6 +368,24 @@ class CertificationApp {
         }
     }
 
+    // Utility to convert image to base64
+    async getBase64Image(imgPath) {
+        return new Promise((resolve, reject) => {
+            const img = new window.Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = function () {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL('image/png'));
+            };
+            img.onerror = reject;
+            img.src = imgPath;
+        });
+    }
+
     async generatePDF(formData) {
         const currentDate = new Date().toLocaleDateString('en-US', {
             year: 'numeric',
@@ -383,24 +401,22 @@ class CertificationApp {
         const margin = 50;
         const contentWidth = pageWidth - (margin * 2);
         
-        // Add company logo at the top
-        /*
+        // Add company logo at the top using base64
         try {
-            const logoImg = new Image();
-            logoImg.src = 'assets/logo.png';
-            await new Promise((resolve, reject) => {
-                logoImg.onload = resolve;
-                logoImg.onerror = reject;
-            });
-            
-            // Add logo (scaled to reasonable size)
+            const logoBase64 = await this.getBase64Image('assets/logo.png');
             const logoWidth = 80;
-            const logoHeight = (logoImg.height * logoWidth) / logoImg.width;
-            doc.addImage(logoImg, 'PNG', margin, 30, logoWidth, logoHeight);
+            // Create a temporary image to get the aspect ratio
+            const tempLogoImg = new window.Image();
+            tempLogoImg.src = logoBase64;
+            await new Promise((resolve, reject) => {
+                tempLogoImg.onload = resolve;
+                tempLogoImg.onerror = reject;
+            });
+            const logoHeight = (tempLogoImg.height * logoWidth) / tempLogoImg.width;
+            doc.addImage(logoBase64, 'PNG', margin, 30, logoWidth, logoHeight);
         } catch (error) {
             console.warn('Could not load logo image:', error);
         }
-        */
         
         // Header - Left side (moved down to accommodate logo)
         doc.setFontSize(10);
@@ -560,41 +576,31 @@ class CertificationApp {
         
         yPos += 35;
         
-        // Add doctor's signature image and name
-        /*
+        // Add doctor's signature image and name using base64
         try {
-            const signatureImg = new Image();
-            signatureImg.src = 'assets/signature.png';
-            await new Promise((resolve, reject) => {
-                signatureImg.onload = resolve;
-                signatureImg.onerror = reject;
-            });
-            
-            // Add signature image (scaled to reasonable size)
+            const signatureBase64 = await this.getBase64Image('assets/signature.png');
             const sigImgWidth = 60;
-            const sigImgHeight = (signatureImg.height * sigImgWidth) / signatureImg.width;
-            doc.addImage(signatureImg, 'PNG', margin, yPos, sigImgWidth, sigImgHeight);
-            
-            // Add doctor's name below the signature image
+            // Create a temporary image to get the aspect ratio
+            const tempSigImg = new window.Image();
+            tempSigImg.src = signatureBase64;
+            await new Promise((resolve, reject) => {
+                tempSigImg.onload = resolve;
+                tempSigImg.onerror = reject;
+            });
+            const sigImgHeight = (tempSigImg.height * sigImgWidth) / tempSigImg.width;
+            doc.addImage(signatureBase64, 'PNG', margin, yPos, sigImgWidth, sigImgHeight);
             yPos += sigImgHeight + 5;
             doc.setFontSize(10);
             doc.setFont(undefined, 'normal');
             doc.text('Allen C. Smith, MD', margin, yPos);
-            
-            yPos += 20; // Add some spacing after the signature section
+            yPos += 20;
         } catch (error) {
             console.warn('Could not load signature image:', error);
-            // If signature image fails to load, just add the text
             doc.setFontSize(10);
             doc.setFont(undefined, 'normal');
             doc.text('Allen C. Smith, MD', margin, yPos);
             yPos += 20;
         }
-        */
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'normal');
-        doc.text('Allen C. Smith, MD', margin, yPos);
-        yPos += 20;
         
         // Note section
         doc.setFontSize(9);
