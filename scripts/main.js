@@ -401,22 +401,8 @@ class CertificationApp {
         const margin = 50;
         const contentWidth = pageWidth - (margin * 2);
         
-        // Add company logo at the top using base64
-        try {
-            const logoBase64 = await this.getBase64Image('assets/logo.png');
-            const logoWidth = 80;
-            // Create a temporary image to get the aspect ratio
-            const tempLogoImg = new window.Image();
-            tempLogoImg.src = logoBase64;
-            await new Promise((resolve, reject) => {
-                tempLogoImg.onload = resolve;
-                tempLogoImg.onerror = reject;
-            });
-            const logoHeight = (tempLogoImg.height * logoWidth) / tempLogoImg.width;
-            doc.addImage(logoBase64, 'PNG', margin, 30, logoWidth, logoHeight);
-        } catch (error) {
-            console.warn('Could not load logo image:', error);
-        }
+        // Add company logo at the top (removed image, keep only text)
+        // (No image code here)
         
         // Header - Left side (moved down to accommodate logo)
         doc.setFontSize(10);
@@ -576,31 +562,11 @@ class CertificationApp {
         
         yPos += 35;
         
-        // Add doctor's signature image and name using base64
-        try {
-            const signatureBase64 = await this.getBase64Image('assets/signature.png');
-            const sigImgWidth = 60;
-            // Create a temporary image to get the aspect ratio
-            const tempSigImg = new window.Image();
-            tempSigImg.src = signatureBase64;
-            await new Promise((resolve, reject) => {
-                tempSigImg.onload = resolve;
-                tempSigImg.onerror = reject;
-            });
-            const sigImgHeight = (tempSigImg.height * sigImgWidth) / tempSigImg.width;
-            doc.addImage(signatureBase64, 'PNG', margin, yPos, sigImgWidth, sigImgHeight);
-            yPos += sigImgHeight + 5;
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text('Allen C. Smith, MD', margin, yPos);
-            yPos += 20;
-        } catch (error) {
-            console.warn('Could not load signature image:', error);
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text('Allen C. Smith, MD', margin, yPos);
-            yPos += 20;
-        }
+        // Add doctor's signature name only (no image)
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text('Allen C. Smith, MD', margin, yPos);
+        yPos += 20;
         
         // Note section
         doc.setFontSize(9);
