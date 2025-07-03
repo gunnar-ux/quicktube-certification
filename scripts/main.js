@@ -409,7 +409,8 @@ class CertificationApp {
         doc.setFont(undefined, 'bold');
         doc.text('Quick Tube Medical', margin, 100);
         
-        // Header - Right side (aligned right, move up)
+        // Header - Right side (aligned right, move up, reset font size)
+        doc.setFontSize(10);
         doc.setFont(undefined, 'normal');
         const headerLines = [
             'Quick Tube Medical, LLC',
