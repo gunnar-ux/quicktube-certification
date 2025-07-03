@@ -404,12 +404,12 @@ class CertificationApp {
         // Add company logo at the top (removed image, keep only text)
         // (No image code here)
         
-        // Header - Left side (moved down to accommodate logo)
-        doc.setFontSize(10);
+        // Header - Left side (move up and make larger)
+        doc.setFontSize(16);
         doc.setFont(undefined, 'bold');
-        doc.text('Quick Tube Medical', margin, 120);
+        doc.text('Quick Tube Medical', margin, 60);
         
-        // Header - Right side (aligned right)
+        // Header - Right side (aligned right, move up)
         doc.setFont(undefined, 'normal');
         const headerLines = [
             'Quick Tube Medical, LLC',
@@ -418,7 +418,7 @@ class CertificationApp {
             'Knoxville, TN. 37917'
         ];
         
-        let yPos = 120;
+        let yPos = 60;
         headerLines.forEach(line => {
             const textWidth = doc.getTextWidth(line);
             doc.text(line, pageWidth - margin - textWidth, yPos);
@@ -431,9 +431,9 @@ class CertificationApp {
         yPos += 12;
         doc.text('(763) 442-1848', pageWidth - margin - doc.getTextWidth('(763) 442-1848'), yPos);
         
-        // Title (centered)
-        yPos = 230;
-        doc.setFontSize(12);
+        // Title (centered, move up and make slightly larger)
+        yPos = 120;
+        doc.setFontSize(15);
         doc.setFont(undefined, 'bold');
         const title = 'Quick Tube Chest Tube Training Certification Form';
         const titleWidth = doc.getTextWidth(title);
@@ -565,7 +565,7 @@ class CertificationApp {
         // Add doctor's signature name only (no image)
         doc.setFontSize(10);
         doc.setFont(undefined, 'normal');
-        doc.text('Allen C. Smith, MD', margin, yPos);
+        doc.text('/Allen C. Smith, MD/', margin, yPos);
         yPos += 20;
         
         // Note section
