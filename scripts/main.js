@@ -404,12 +404,12 @@ class CertificationApp {
         // Add company logo at the top (removed image, keep only text)
         // (No image code here)
         
-        // Header - Left side (make slightly larger and move up)
-        doc.setFontSize(14);
+        // Header - Left side (make even larger)
+        doc.setFontSize(17);
         doc.setFont(undefined, 'bold');
         doc.text('Quick Tube Medical', margin, 100);
         
-        // Header - Right side (aligned right, move up, reset font size)
+        // Header - Right side (aligned right, keep font size 10)
         doc.setFontSize(10);
         doc.setFont(undefined, 'normal');
         const headerLines = [
@@ -563,10 +563,16 @@ class CertificationApp {
         
         yPos += 35;
         
-        // Add doctor's signature name only (no image)
+        // Add Allen's signature and title at the bottom
         doc.setFontSize(10);
         doc.setFont(undefined, 'normal');
         doc.text('/Allen C. Smith, MD/', margin, yPos);
+        yPos += 10;
+        // Draw a line under the signature
+        const sigLineWidth = 200;
+        doc.line(margin, yPos + 2, margin + sigLineWidth, yPos + 2);
+        yPos += 15;
+        doc.text('Founder, Manager Quick Tube Medical LLC', margin, yPos);
         yPos += 20;
         
         // Note section
