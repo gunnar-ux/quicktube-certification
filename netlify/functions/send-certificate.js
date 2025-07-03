@@ -3,39 +3,19 @@ const nodemailer = require('nodemailer');
 // Email transporter setup
 async function setupEmailTransporter() {
     console.log('Setting up email transporter...');
-    console.log('EMAIL_USER:', process.env.EMAIL_USER ? 'Set' : 'Not set');
-    console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? 'Set (length: ' + process.env.EMAIL_PASS.length + ')' : 'Not set');
-    
-    // Use environment variables for email configuration
-    if (process.env.SMTP_HOST) {
-        console.log('Using custom SMTP configuration');
-        // Custom SMTP configuration
-        return nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: process.env.SMTP_PORT || 587,
-            secure: process.env.SMTP_SECURE === 'true',
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS
-            }
-        });
-    } else {
-        console.log('Using Gmail configuration');
-        // Gmail configuration with better settings
-        return nodemailer.createTransport({
-            service: 'gmail',
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false, // Use TLS
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            },
-            tls: {
-                rejectUnauthorized: false
-            }
-        });
-    }
+    console.log('SMTP_USER:', process.env.SMTP_USER ? 'Set' : 'Not set');
+    console.log('SMTP_PASS:', process.env.SMTP_PASS ? 'Set (length: ' + (process.env.SMTP_PASS ? process.env.SMTP_PASS.length : 0) + ')' : 'Not set');
+
+    // Use Microsoft/Outlook SMTP configuration
+    return nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.office365.com',
+        port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587,
+        secure: process.env.SMTP_SECURE === 'true', // false for STARTTLS
+        auth: {
+            user: process.env.SMTP_USER, // maugustine@quicktubemedical.com
+            pass: process.env.SMTP_PASS  // app password
+        }
+    });
 }
 
 exports.handler = async (event, context) => {
@@ -105,9 +85,10 @@ exports.handler = async (event, context) => {
 
         // Email content
         const mailOptions = {
-            from: process.env.FROM_EMAIL || 'noreply@quicktubemedical.com',
+            from: process.env.FROM_EMAIL || 'info@quicktubemedical.com',
             to: formData.email,
-            bcc: 'gunnar.autterson@gmail.com', // Testing - change to maugustine@quicktubemedical.com for production
+            bcc: 'maugustine@quicktubemedical.com', // Mike gets a copy
+            replyTo: process.env.FROM_EMAIL || 'info@quicktubemedical.com',
             subject: 'Quick Tube Chest Tube System - Certificate of Completion',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -132,7 +113,7 @@ exports.handler = async (event, context) => {
                     training program and are certified to use the Quick Tube Chest Tube System in clinical practice.</p>
                     
                     <p>If you have any questions or need additional documentation, please contact us at 
-                    <a href="mailto:maugustine@quicktubemedical.com">maugustine@quicktubemedical.com</a>.</p>
+                    <a href="mailto:info@quicktubemedical.com">info@quicktubemedical.com</a>.</p>
                     
                     <p>Best regards,<br>
                     <strong>Quick Tube Medical Team</strong></p>
