@@ -404,12 +404,12 @@ class CertificationApp {
         // Add company logo at the top (removed image, keep only text)
         // (No image code here)
         
-        // Header - Left side (revert to previous y and font size)
-        doc.setFontSize(10);
+        // Header - Left side (make slightly larger and move up)
+        doc.setFontSize(14);
         doc.setFont(undefined, 'bold');
-        doc.text('Quick Tube Medical', margin, 120);
+        doc.text('Quick Tube Medical', margin, 100);
         
-        // Header - Right side (aligned right, revert y)
+        // Header - Right side (aligned right, move up)
         doc.setFont(undefined, 'normal');
         const headerLines = [
             'Quick Tube Medical, LLC',
@@ -418,7 +418,7 @@ class CertificationApp {
             'Knoxville, TN. 37917'
         ];
         
-        let yPos = 120;
+        let yPos = 100;
         headerLines.forEach(line => {
             const textWidth = doc.getTextWidth(line);
             doc.text(line, pageWidth - margin - textWidth, yPos);
@@ -431,8 +431,8 @@ class CertificationApp {
         yPos += 12;
         doc.text('(763) 442-1848', pageWidth - margin - doc.getTextWidth('(763) 442-1848'), yPos);
         
-        // Title (centered, revert y and font size)
-        yPos = 230;
+        // Title (centered, move up)
+        yPos = 210;
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
         const title = 'Quick Tube Chest Tube Training Certification Form';
