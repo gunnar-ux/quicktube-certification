@@ -6,14 +6,14 @@ async function setupEmailTransporter() {
     console.log('SMTP_USER:', process.env.SMTP_USER ? 'Set' : 'Not set');
     console.log('SMTP_PASS:', process.env.SMTP_PASS ? 'Set (length: ' + (process.env.SMTP_PASS ? process.env.SMTP_PASS.length : 0) + ')' : 'Not set');
 
-    // Use Microsoft/Outlook SMTP configuration
+    // Use Gmail SMTP configuration (default)
     return nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.office365.com',
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
         port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587,
         secure: process.env.SMTP_SECURE === 'true', // false for STARTTLS
         auth: {
-            user: process.env.SMTP_USER, // maugustine@quicktubemedical.com
-            pass: process.env.SMTP_PASS  // app password
+            user: process.env.SMTP_USER, // quicktubecertification@gmail.com
+            pass: process.env.SMTP_PASS  // Gmail app password
         }
     });
 }
