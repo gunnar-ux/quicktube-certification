@@ -88,7 +88,7 @@ exports.handler = async (event, context) => {
             from: process.env.FROM_EMAIL || 'quicktubecertification@gmail.com',
             to: formData.email,
             bcc: 'maugustine@quicktubemedical.com', // Mike gets a copy
-            replyTo: process.env.FROM_EMAIL || 'quicktubecertification@gmail.com',
+            replyTo: 'info@quicktubemedical.com',
             subject: 'Quick Tube Chest Tube System - Certificate of Completion',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
