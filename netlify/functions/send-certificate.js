@@ -113,7 +113,7 @@ exports.handler = async (event, context) => {
                     training program and are certified to use the Quick Tube Chest Tube System in clinical practice.</p>
                     
                     <p>If you have any questions or need additional documentation, please contact us at 
-                    <a href="mailto:quicktubecertification@gmail.com">quicktubecertification@gmail.com</a>.</p>
+                    <a href="mailto:info@quicktubemedical.com">info@quicktubemedical.com</a>.</p>
                     
                     <p>Best regards,<br>
                     <strong>Quick Tube Medical Team</strong></p>
