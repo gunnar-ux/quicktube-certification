@@ -85,10 +85,10 @@ exports.handler = async (event, context) => {
 
         // Email content
         const mailOptions = {
-            from: process.env.FROM_EMAIL || 'info@quicktubemedical.com',
+            from: process.env.FROM_EMAIL || 'quicktubecertification@gmail.com',
             to: formData.email,
             bcc: 'maugustine@quicktubemedical.com', // Mike gets a copy
-            replyTo: process.env.FROM_EMAIL || 'info@quicktubemedical.com',
+            replyTo: process.env.FROM_EMAIL || 'quicktubecertification@gmail.com',
             subject: 'Quick Tube Chest Tube System - Certificate of Completion',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -113,7 +113,7 @@ exports.handler = async (event, context) => {
                     training program and are certified to use the Quick Tube Chest Tube System in clinical practice.</p>
                     
                     <p>If you have any questions or need additional documentation, please contact us at 
-                    <a href="mailto:info@quicktubemedical.com">info@quicktubemedical.com</a>.</p>
+                    <a href="mailto:quicktubecertification@gmail.com">quicktubecertification@gmail.com</a>.</p>
                     
                     <p>Best regards,<br>
                     <strong>Quick Tube Medical Team</strong></p>
