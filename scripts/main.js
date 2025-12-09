@@ -45,61 +45,55 @@ class CertificationApp {
                 statusEl.textContent = 'Not completed';
                 statusEl.className = 'video-status not-completed';
                 
-                console.log(`YouTube video ${videoId} initialized`);
+                console.log(`Vimeo video ${videoId} initialized`);
             }
         });
 
-        // Initialize YouTube players when API is ready
-        this.initializeYouTubePlayers(videos);
+        // Initialize Vimeo players
+        this.initializeVimeoPlayers(videos);
     }
 
-    initializeYouTubePlayers(videos) {
-        // Wait for YouTube API to be ready
+    initializeVimeoPlayers(videos) {
+        // Wait for Vimeo Player API to be ready
         const initPlayers = () => {
-            if (!window.YT || !window.YT.Player) {
-                console.log('YouTube API not ready, waiting...');
+            if (!window.Vimeo || !window.Vimeo.Player) {
+                console.log('Vimeo Player API not ready, waiting...');
                 setTimeout(initPlayers, 500);
                 return;
             }
             
-            console.log('YouTube API ready, initializing players...');
+            console.log('Vimeo Player API ready, initializing players...');
             
             videos.forEach((videoId, index) => {
                 const iframe = document.getElementById(videoId);
                 if (iframe) {
-                    // Extract video ID from src
-                    const src = iframe.src;
-                    const videoIdMatch = src.match(/embed\/([^?]+)/);
-                    const youtubeVideoId = videoIdMatch ? videoIdMatch[1] : 'pSPoq13ZHf4';
+                    console.log(`Creating Vimeo player for ${videoId}`);
                     
-                    console.log(`Creating player for ${videoId} with YouTube ID: ${youtubeVideoId}`);
-                    
-                    // Replace iframe with div for YouTube player
-                    const playerDiv = document.createElement('div');
-                    playerDiv.id = videoId + '_player';
-                    iframe.parentNode.replaceChild(playerDiv, iframe);
-                    
-                    // Create YouTube player
-                    const player = new window.YT.Player(playerDiv.id, {
-                        height: '400',
-                        width: '100%',
-                        videoId: youtubeVideoId,
-                        playerVars: {
-                            'enablejsapi': 1,
-                            'origin': window.location.origin
-                        },
-                        events: {
-                            'onReady': (event) => {
-                                console.log(`YouTube player ${videoId} ready`);
-                                this.startProgressTracking(event.target, index);
-                            },
-                            'onStateChange': (event) => this.onPlayerStateChange(event, index)
-                        }
-                    });
+                    // Create Vimeo player from existing iframe
+                    const player = new window.Vimeo.Player(iframe);
                     
                     // Store player reference
                     if (!this.players) this.players = {};
                     this.players[videoId] = player;
+                    
+                    // Set up event listeners
+                    player.on('play', () => {
+                        console.log(`${videoId} started playing`);
+                        this.startProgressTracking(player, index);
+                    });
+                    
+                    player.on('pause', () => {
+                        console.log(`${videoId} paused`);
+                        this.stopProgressTracking(index);
+                    });
+                    
+                    player.on('ended', () => {
+                        console.log(`${videoId} ended`);
+                        this.completeVideo(index, true);
+                        this.stopProgressTracking(index);
+                    });
+                    
+                    console.log(`Vimeo player ${videoId} ready`);
                 }
             });
         };
@@ -107,20 +101,7 @@ class CertificationApp {
         initPlayers();
     }
 
-    onPlayerStateChange(event, videoIndex) {
-        const videoId = `video${videoIndex}`;
-        console.log(`Video ${videoId} state changed:`, event.data);
-        
-        // Start tracking when video plays
-        if (event.data === window.YT.PlayerState.PLAYING) {
-            this.startProgressTracking(event.target, videoIndex);
-        }
-        
-        // Stop tracking when video pauses or ends
-        if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) {
-            this.stopProgressTracking(videoIndex);
-        }
-    }
+    // Method removed - Vimeo uses event listeners instead of state change callbacks
 
     startProgressTracking(player, videoIndex) {
         const videoId = `video${videoIndex}`;
@@ -136,22 +117,20 @@ class CertificationApp {
         console.log(`Starting progress tracking for ${videoId}`);
         
         // Track progress every 2 seconds
-        this.progressIntervals[videoId] = setInterval(() => {
+        this.progressIntervals[videoId] = setInterval(async () => {
             try {
-                if (player.getPlayerState() === window.YT.PlayerState.PLAYING) {
-                    const currentTime = player.getCurrentTime();
-                    const duration = player.getDuration();
+                const currentTime = await player.getCurrentTime();
+                const duration = await player.getDuration();
+                
+                if (duration > 0) {
+                    const progress = (currentTime / duration) * 100;
+                    console.log(`${videoId} progress: ${progress.toFixed(1)}%`);
                     
-                    if (duration > 0) {
-                        const progress = (currentTime / duration) * 100;
-                        console.log(`${videoId} progress: ${progress.toFixed(1)}%`);
-                        
-                        // Auto-complete at 90%
-                        if (progress >= 90 && !this.videoProgress[videoId]) {
-                            console.log(`${videoId} reached 90%, marking as complete`);
-                            this.completeVideo(videoIndex, true);
-                            this.stopProgressTracking(videoIndex);
-                        }
+                    // Auto-complete at 90%
+                    if (progress >= 90 && !this.videoProgress[videoId]) {
+                        console.log(`${videoId} reached 90%, marking as complete`);
+                        this.completeVideo(videoIndex, true);
+                        this.stopProgressTracking(videoIndex);
                     }
                 }
             } catch (error) {
@@ -780,10 +759,4 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 });
 
-// Global YouTube API ready callback
-window.onYouTubeIframeAPIReady = function() {
-    console.log('YouTube API loaded globally');
-    if (app) {
-        app.setupVideoTracking();
-    }
-}; 
+// Vimeo Player API loads automatically, no global callback needed 
