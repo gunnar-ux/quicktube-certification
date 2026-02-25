@@ -183,8 +183,11 @@ class CertificationApp {
     setInitialDate() {
         const completionDateInput = document.getElementById('completionDate');
         if (completionDateInput) {
-            const today = new Date().toISOString().split('T')[0];
-            completionDateInput.value = today;
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            completionDateInput.value = `${year}-${month}-${day}`;
         }
     }
 
@@ -466,7 +469,8 @@ class CertificationApp {
         const dateEndX = pageWidth - margin;
         doc.line(dateFieldX, yPos + 2, dateEndX, yPos + 2);
         
-        const formattedDate = new Date(formData.completionDate).toLocaleDateString('en-US');
+        const [cYear, cMonth, cDay] = formData.completionDate.split('-');
+        const formattedDate = new Date(cYear, cMonth - 1, cDay).toLocaleDateString('en-US');
         doc.text(formattedDate, dateFieldX + 2, yPos);
         
         yPos += 35;
