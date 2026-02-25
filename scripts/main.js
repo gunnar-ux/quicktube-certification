@@ -2,10 +2,9 @@
 class CertificationApp {
     constructor() {
         this.currentStep = 0;
-        this.totalSteps = 6;
+        this.totalSteps = 5;
         this.videoProgress = {
             video0: false,
-            video1: false,
             video2: false
         };
         this.progressIntervals = {};
@@ -34,7 +33,7 @@ class CertificationApp {
     }
 
     setupVideoTracking() {
-        const videos = ['video0', 'video1'];
+        const videos = ['video0'];
         
         videos.forEach(videoId => {
             const iframe = document.getElementById(videoId);
@@ -202,13 +201,12 @@ class CertificationApp {
             let isCompleted = stepData < this.currentStep;
             
             if (stepData === 1 && this.videoProgress.video0) isCompleted = true;
-            if (stepData === 2 && this.videoProgress.video1) isCompleted = true;
-            if (stepData === 3 && this.videoProgress.video2) isCompleted = true;
-            if (stepData === 5 && this.currentStep === 5) isCompleted = true; // Mark success step as completed when reached
+            if (stepData === 2 && this.videoProgress.video2) isCompleted = true;
+            if (stepData === 4 && this.currentStep === 4) isCompleted = true; // Mark success step as completed when reached
             
             // Update classes
             step.classList.remove('active', 'completed');
-            if (stepData === this.currentStep && stepData !== 5) {
+            if (stepData === this.currentStep && stepData !== 4) {
                 // Only show as active if not the final success step
                 step.classList.add('active');
             } else if (isCompleted) {
@@ -236,32 +234,27 @@ class CertificationApp {
             case 0: // Welcome step - hide next button, use primary CTA instead
                 nextBtn.style.display = 'none';
                 break;
-            case 1: // Video 0
+            case 1: // Product Walk-Through video
                 canProceed = this.videoProgress.video0;
-                nextBtn.textContent = 'Next Video →';
-                nextBtn.style.display = 'block';
-                break;
-            case 2: // Video 1
-                canProceed = this.videoProgress.video1;
                 nextBtn.textContent = 'Next →';
                 nextBtn.style.display = 'block';
                 break;
-            case 3: // Video 2
+            case 2: // IFU PDF step
                 // For PDF step, check the checkbox state
                 const pdfCheckbox = document.getElementById('pdfConfirmation');
                 canProceed = pdfCheckbox && pdfCheckbox.checked;
                 nextBtn.textContent = 'Complete Training →';
                 nextBtn.style.display = 'block';
                 break;
-            case 4: // Form step
+            case 3: // Form step
                 nextBtn.style.display = 'none'; // Form has its own submit button
                 break;
-            case 5: // Success step
+            case 4: // Success step
                 nextBtn.style.display = 'none';
                 break;
         }
         
-        if (this.currentStep > 0 && this.currentStep < 4) {
+        if (this.currentStep > 0 && this.currentStep < 3) {
             nextBtn.disabled = !canProceed;
         }
     }
@@ -272,8 +265,8 @@ class CertificationApp {
         if (currentStepEl) {
             currentStepEl.classList.remove('active');
         }
-        // Reset PDF checkbox if leaving or entering step 3
-        if (this.currentStep === 3 || stepNumber === 3) {
+        // Reset PDF checkbox if leaving or entering step 2
+        if (this.currentStep === 2 || stepNumber === 2) {
             const pdfCheckbox = document.getElementById('pdfConfirmation');
             if (pdfCheckbox) pdfCheckbox.checked = false;
             this.videoProgress.video2 = false;
@@ -299,9 +292,8 @@ class CertificationApp {
         switch (stepNumber) {
             case 1: return true; // Can always go to first video
             case 2: return this.videoProgress.video0;
-            case 3: return this.videoProgress.video1;
-            case 4: return this.videoProgress.video2;
-            case 5: return false; // Success step only accessible via form submission
+            case 3: return this.videoProgress.video2;
+            case 4: return false; // Success step only accessible via form submission
             default: return false;
         }
     }
@@ -334,7 +326,7 @@ class CertificationApp {
             await this.sendCertificate(formData, pdfBlob);
             
             // Go to success step
-            this.goToStep(5);
+            this.goToStep(4);
             
         } catch (error) {
             console.error('Certificate generation failed:', error);
@@ -654,13 +646,12 @@ class CertificationApp {
         // Can click on current step
         if (stepNumber === this.currentStep) return true;
         
-        // Can click on completed video steps
+        // Can click on completed steps
         if (stepNumber === 1 && this.videoProgress.video0) return true;
-        if (stepNumber === 2 && this.videoProgress.video1) return true;
-        if (stepNumber === 3 && this.videoProgress.video2) return true;
+        if (stepNumber === 2 && this.videoProgress.video2) return true;
         
-        // Can click on form step if all videos completed
-        if (stepNumber === 4 && this.videoProgress.video0 && this.videoProgress.video1 && this.videoProgress.video2) return true;
+        // Can click on form step if all tasks completed
+        if (stepNumber === 3 && this.videoProgress.video0 && this.videoProgress.video2) return true;
         
         // Cannot click on success step - only reachable via form submission
         return false;
